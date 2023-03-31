@@ -10,7 +10,7 @@ export default function Account({ session }: { session: Session }) {
   const user = useUser()
   const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState<Profiles['username']>(null)
-  const [website, setWebsite] = useState<Profiles['website']>(null)
+  const [telegramId, setTelegramId] = useState<Profiles['telegram_id']>(null)
   const [avatar_url, setAvatarUrl] = useState<Profiles['avatar_url']>(null)
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function Account({ session }: { session: Session }) {
 
         let { data, error, status } = await supabase
           .from('profiles')
-          .select(`username, website, avatar_url`)
+          .select(`username, telegram_id, avatar_url`)
           .eq('id', user.id)
           .single()
 
@@ -31,7 +31,7 @@ export default function Account({ session }: { session: Session }) {
 
         if (data) {
           setUsername(data.username)
-          setWebsite(data.website)
+          setTelegramId(data.telegram_id)
           setAvatarUrl(data.avatar_url)
         }
       } catch (error) {
@@ -47,11 +47,11 @@ export default function Account({ session }: { session: Session }) {
 
   async function updateProfile({
     username,
-    website,
+    telegram_id,
     avatar_url,
   }: {
     username: Profiles['username']
-    website: Profiles['website']
+    telegram_id: Profiles['telegram_id']
     avatar_url: Profiles['avatar_url']
   }) {
     try {
@@ -61,7 +61,7 @@ export default function Account({ session }: { session: Session }) {
       const updates = {
         id: user.id,
         username,
-        website,
+        telegram_id,
         avatar_url,
         updated_at: new Date().toISOString(),
       }
@@ -85,7 +85,7 @@ export default function Account({ session }: { session: Session }) {
         size={150}
         onUpload={(url) => {
           setAvatarUrl(url)
-          updateProfile({ username, website, avatar_url: url })
+          updateProfile({ username, telegram_id: telegramId, avatar_url: url })
         }}
       />
       <div>
@@ -102,19 +102,19 @@ export default function Account({ session }: { session: Session }) {
         />
       </div>
       <div>
-        <label htmlFor="website">Website</label>
+        <label htmlFor="telegram_id">Telegram id</label>
         <input
-          id="website"
-          type="website"
-          value={website || ''}
-          onChange={(e) => setWebsite(e.target.value)}
+          id="telegram_id"
+          type="telegram_id"
+          value={telegramId || ''}
+          onChange={(e) => setTelegramId(e.target.value)}
         />
       </div>
 
       <div>
         <button
           className="button primary block"
-          onClick={() => updateProfile({ username, website, avatar_url })}
+          onClick={() => updateProfile({ username, telegram_id: telegramId, avatar_url })}
           disabled={loading}
         >
           {loading ? 'Loading ...' : 'Update'}

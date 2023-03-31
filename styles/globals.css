@@ -425,7 +425,7 @@ button.primary,
   margin-bottom: 5px;
 }
 
-.profileCard > .userInfo > .website {
+.profileCard > .userInfo > .telegram_id {
   font-size: 0.9rem;
   color: var(--custom-color-brand);
   margin-bottom: 10px;
