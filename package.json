@@ -8,13 +8,21 @@
     "start": "next start"
   },
   "dependencies": {
+    "@rainbow-me/rainbowkit": "^0.12.5",
+    "@reach/combobox": "^0.18.0",
+    "@react-google-maps/api": "^2.18.1",
     "@supabase/auth-helpers-nextjs": "^0.5.4",
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/auth-ui-react": "^0.2.6",
     "@supabase/supabase-js": "^2.5.0",
+    "date-fns": "^2.29.3",
+    "ethers": "^5",
     "next": "12.3.1",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-google-autocomplete": "^2.7.3",
+    "use-places-autocomplete": "^4.0.0",
+    "wagmi": "^0.12.8"
   },
   "devDependencies": {
     "@types/node": "18.8.5",

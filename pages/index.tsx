@@ -3,29 +3,20 @@ import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import Account from '../components/Account'
 import Footer from '../components/Footer'
+import Login from '../components/Login'
+import Dashboard from '../components/Dashboard'
 
 const Home: NextPage = () => {
   const session = useSession()
   const supabase = useSupabaseClient()
 
   return (
-    <div className="container" style={{ padding: '50px 0 100px 0' }}>
+    <div >
       {!session ? (
-        <div className="row">
-          <div className="col-6">
-            <h1 className="header">Adventify</h1>
-            <p className="">
-            Our mission is to revolutionize travel memories with a global NFT platform that inspires exploration, connection, and lasting memories while supporting artists and local businesses worldwide.
-            </p>
-          </div>
-          <div className="col-6 auth-widget">
-            <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} theme="dark" />
-          </div>
-        </div>
+        <Login supabase={supabase} />
       ) : (
         <>
-          <h3>Account</h3>
-          <Account session={session} />
+          <Dashboard />
         </>
       )}
 
