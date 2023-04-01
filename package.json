@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "typechain": "typechain --target=ethers-v5 ./src/backend/crypto/**/*.json --out-dir ./src/types/generated/typechain/"
   },
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.3.28",
     "@rainbow-me/rainbowkit": "^0.12.5",
     "@reach/combobox": "^0.18.0",
     "@react-google-maps/api": "^2.18.1",
@@ -17,7 +19,10 @@
     "@supabase/supabase-js": "^2.5.0",
     "date-fns": "^2.29.3",
     "ethers": "^5",
+    "ipfs-http-client": "^60.0.0",
+    "mongoose": "^7.0.3",
     "next": "12.3.1",
+    "openai": "^3.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-google-autocomplete": "^2.7.3",
@@ -30,6 +35,7 @@
     "@types/react-dom": "18.0.6",
     "eslint": "8.25.0",
     "eslint-config-next": "12.3.1",
+    "typechain": "^8.1.1",
     "typescript": "4.8.4"
   }
 }
