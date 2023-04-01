@@ -13,10 +13,9 @@ const Home: NextPage = () => {
       {!session ? (
         <div className="row">
           <div className="col-6">
-            <h1 className="header">Supabase Auth + Storage</h1>
+            <h1 className="header">Adventify</h1>
             <p className="">
-              Experience our Auth and Storage through a simple profile management example. Create a
-              user profile and upload an avatar image. Fast, simple, secure.
+            Our mission is to revolutionize travel memories with a global NFT platform that inspires exploration, connection, and lasting memories while supporting artists and local businesses worldwide.
             </p>
           </div>
           <div className="col-6 auth-widget">
