@@ -7,7 +7,6 @@ import {
   MarkerClusterer,
   InfoWindow,
 } from '@react-google-maps/api'
-import Places from '../Places'
 import { formatRelative } from 'date-fns'
 import Search from '../Search'
 import Header from '../Header'
@@ -15,6 +14,8 @@ import mapStyles from './mapStyles'
 type LatLngLiteral = google.maps.LatLngLiteral
 type DirectionsResult = google.maps.DirectionsResult
 type MapOptions = google.maps.MapOptions
+import { useDisclosure } from '@chakra-ui/react'
+import ConfirmMint from './ConfirmMint'
 
 export default function Map() {
   const [markers, setMarkers] = useState([])
@@ -39,16 +40,25 @@ export default function Map() {
     }
     getLocation()
   })
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const onConfirmMint = () => {
+    // call apu/mintPlace
+    onClose()
+  }
 
   const onMapClick = useCallback((e: any) => {
-    setMarkers((current) => [
-      ...current,
-      {
-        lat: e.latLng.lat(),
-        lng: e.latLng.lng(),
-        time: new Date(),
-      },
-    ])
+    console.log('place', e)
+    onOpen()
+
+    // setMarkers((current) => [
+    //   ...current,
+    //   {
+    //     lat: e.latLng.lat(),
+    //     lng: e.latLng.lng(),
+    //     time: new Date(),
+    //   },
+    // ])
   }, [])
   const mapRef = useRef<GoogleMap>()
 
@@ -70,7 +80,7 @@ export default function Map() {
   return (
     <div>
       <Header panTo={panTo} />
-
+      <ConfirmMint onClose={onClose} onOpen={onOpen} isOpen={isOpen} onConfirm={onConfirmMint} />
       <div className="map">
         <GoogleMap
           zoom={10}
@@ -81,6 +91,21 @@ export default function Map() {
           onLoad={onLoad}
           onClick={onMapClick}
         >
+          {markers.map((marker) => (
+            <Marker
+              key={`${marker.lat}-${marker.lng}`}
+              position={{ lat: marker.lat, lng: marker.lng }}
+              onClick={() => {
+                setSelected(marker)
+              }}
+              icon={{
+                url: `/marker.svg`,
+                origin: new window.google.maps.Point(0, 0),
+                anchor: new window.google.maps.Point(15, 15),
+                scaledSize: new window.google.maps.Size(30, 30),
+              }}
+            />
+          ))}
           {selected ? (
             <InfoWindow
               position={{ lat: selected.lat, lng: selected.lng }}
@@ -91,11 +116,10 @@ export default function Map() {
               <div>
                 <h2>
                   <span role="img" aria-label="bear">
-                    🐻
+                    📍
                   </span>{' '}
-                  Alert
                 </h2>
-                <p>Spotted {formatRelative(selected.time, new Date())}</p>
+                <p>Place Spotted {formatRelative(selected.time, new Date())}</p>
               </div>
             </InfoWindow>
           ) : null}

@@ -1,19 +1,21 @@
 import type { NextPage } from 'next'
-import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
-import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
+
 import Account from '../src/components/Account'
 import Footer from '../src/components/Footer'
 import Login from '../src/components/Login'
 import Dashboard from '../src/components/Dashboard'
+import { UserStore } from '../src/stores/user.store'
+import { useEffect, useState } from 'react'
+import Landing from '@/components/Landing'
 
 const Home: NextPage = () => {
-  const session = useSession()
-  const supabase = useSupabaseClient()
+  // const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+const isAuthenticated = UserStore((state) => state.isAuthenticated);
 
   return (
     <div>
-      {!session ? (
-        <Login supabase={supabase} />
+      {!isAuthenticated ? (
+        <Landing  />
       ) : (
         <>
           <Dashboard />
