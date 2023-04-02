@@ -4,7 +4,6 @@ import { GitHubIcon, GoogleIcon, TwitterIcon } from './ProviderIcons'
 const providers = [
   { name: 'Google', icon: <GoogleIcon boxSize="5" /> },
   { name: 'Twitter', icon: <TwitterIcon boxSize="5" /> },
-  { name: 'GitHub', icon: <GitHubIcon boxSize="5" /> },
 ]
 
 export const OAuthButtonGroup = () => (
