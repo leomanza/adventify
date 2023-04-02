@@ -33,20 +33,6 @@ const PlaceSchema: Schema = new Schema<IPlace>({
     type: String,
     required: true,
   },
-  // location: new Schema<{ latitude: Number; longitude: Number }>(
-  //   {
-  //     latitude: { type: Number, required: true },
-  //     longitude: { type: Number, required: true },
-  //   },
-  //   { _id: false }
-  // ),
-  // compoundCode: new Schema<{ code: String; name: String }>(
-  //   {
-  //     code: { type: String, required: true },
-  //     name: { type: String, required: true },
-  //   },
-  //   { _id: false }
-  // ),
   imageUrl: {
     type: String,
     required: true,
