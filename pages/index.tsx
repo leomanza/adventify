@@ -5,13 +5,15 @@ import Footer from '../src/components/Footer'
 import Login from '../src/components/Login'
 import Dashboard from '../src/components/Dashboard'
 import { UserStore } from '../src/stores/user.store'
+import { useEffect, useState } from 'react'
 
 const Home: NextPage = () => {
-  const user = UserStore((state) => state.user);
+  // const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+const isAuthenticated = UserStore((state) => state.isAuthenticated);
 
   return (
     <div>
-      {!user ? (
+      {!isAuthenticated ? (
         <Login  />
       ) : (
         <>

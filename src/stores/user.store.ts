@@ -7,14 +7,25 @@ interface User {
 
 interface State {
   user?: User;
-  setUser: (user: User) => void
+  setUser: (user: User) => void,
+  isAuthenticated: boolean,
+  removeAuthInfo: () => void
 }
 
 export const UserStore = create<State>()(
   persist(
     (set, get) => ({
       user: undefined,
-      setUser: (user: User) => set({ user }),
+      isAuthenticated: false,
+      setUser: (_user: User) => set({ user: _user, isAuthenticated: true }),
+      removeAuthInfo: () =>
+        set((state) => {
+          return {
+            ...state,
+            user: undefined,
+            isAuthenticated: false,
+          };
+        }),
     }),
     {
       name: "user",
