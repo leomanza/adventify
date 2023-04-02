@@ -7,6 +7,7 @@ import {
   ComboboxList,
   ComboboxOption,
 } from '@reach/combobox'
+import { Box } from "@chakra-ui/react"
 import '@reach/combobox/styles.css'
 import { placeTypeRestrictions, searchTypesFilter } from '../config/placesAutocomplete'
 
@@ -46,7 +47,7 @@ export default function Search({ panTo }: { panTo: any }) {
   }
 
   return (
-    <div className="search">
+    <Box className="search"> 
       <Combobox>
         <ComboboxInput
           style={{ color: 'black' }}
@@ -80,6 +81,6 @@ export default function Search({ panTo }: { panTo: any }) {
           </ComboboxList>
         </ComboboxPopover>
       </Combobox>
-    </div>
+    </Box>
   )
 }
