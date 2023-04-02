@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import usePlacesAutocomplete, { getGeocode, getLatLng , getDetails} from 'use-places-autocomplete'
+import React, { ReactEventHandler, useState } from 'react'
+import usePlacesAutocomplete, { getGeocode, getLatLng, getDetails } from 'use-places-autocomplete'
 import {
   Combobox,
   ComboboxInput,
@@ -18,23 +18,18 @@ export default function Search({ panTo }: { panTo: any }) {
     setValue,
     clearSuggestions,
   } = usePlacesAutocomplete({
-    requestOptions: {
-      types: placeTypeRestrictions
-    },
-    debounce: 3000,
+    // requestOptions: {
+    //   types: placeTypeRestrictions
+    // },
+    debounce: 1000,
     cache: 86400,
   })
 
-  const [placeId, setPlaceId] = useState<string>();
+  const [placeId, setPlaceId] = useState<string>()
 
   // https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#AutocompletionRequest
 
-  const handleInput = (e) => {
-    setValue(e.target.value)
-  }
-
   const handleSelect = async (description: any, placeId: string) => {
-
     setValue(description, false)
     clearSuggestions()
 
@@ -43,7 +38,8 @@ export default function Search({ panTo }: { panTo: any }) {
       // const location = await getLocation()
       // const place = await getDetails({fields: ["place_id", "name", "formatted_address"], })
       const { lat, lng } = await getLatLng(results[0])
-      panTo({ lat, lng, placeId, description})
+      panTo({ lat, lng, placeId, description })
+      setValue('')
     } catch (error) {
       console.log('😱 Error: ', error)
     }
@@ -55,16 +51,32 @@ export default function Search({ panTo }: { panTo: any }) {
         <ComboboxInput
           style={{ color: 'black' }}
           value={value}
-          onChange={handleInput}
+          onChange={(e) => {
+            setValue(e.target.value)
+          }}
           disabled={!ready}
           placeholder="Search a place"
         />
         <ComboboxPopover>
           <ComboboxList>
             {status === 'OK' &&
-              data.map(({ place_id, description, structured_formatting: { main_text, secondary_text} }) => (
-                <ComboboxOption style={{ color: 'black' }} key={place_id} value={`${description} `} onClick={() => { setPlaceId(place_id); handleSelect(description, place_id)}} />
-              ))}
+              data.map(
+                ({
+                  place_id,
+                  description,
+                  structured_formatting: { main_text, secondary_text },
+                }) => (
+                  <ComboboxOption
+                    style={{ color: 'black' }}
+                    key={place_id}
+                    value={`${description} `}
+                    onClick={() => {
+                      setPlaceId(place_id)
+                      handleSelect(description, place_id)
+                    }}
+                  />
+                )
+              )}
           </ComboboxList>
         </ComboboxPopover>
       </Combobox>

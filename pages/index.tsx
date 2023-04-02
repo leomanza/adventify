@@ -10,17 +10,11 @@ import Landing from '@/components/Landing'
 
 const Home: NextPage = () => {
   // const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-const isAuthenticated = UserStore((state) => state.isAuthenticated);
+  const isAuthenticated = UserStore((state) => state.isAuthenticated)
 
   return (
     <div>
-      {!isAuthenticated ? (
-        <Landing  />
-      ) : (
-        <>
-          <Dashboard />
-        </>
-      )}
+      {!isAuthenticated ? <Landing /> : <Dashboard />}
 
       <Footer />
     </div>

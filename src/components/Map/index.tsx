@@ -1,22 +1,27 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
-import {
-  GoogleMap,
-  Marker,
-  DirectionsRenderer,
-  Circle,
-  MarkerClusterer,
-  InfoWindow,
-} from '@react-google-maps/api'
-import { formatRelative } from 'date-fns'
-import Search from '../Search'
+import { GoogleMap, Marker, InfoWindow } from '@react-google-maps/api'
 import Header from '../Header'
 import mapStyles from './mapStyles'
-type LatLngLiteral = google.maps.LatLngLiteral
-type DirectionsResult = google.maps.DirectionsResult
-type MapOptions = google.maps.MapOptions
-import { useDisclosure, Button, Flex, Text } from '@chakra-ui/react'
-import ConfirmMint from './ConfirmMint'
+import { Button, Flex, Text, useDisclosure } from '@chakra-ui/react'
 import { UserStore } from '@/stores/user.store'
+import axios from 'axios'
+import MintedModal from '@/components/MintedModal'
+import useUserPlaces from '@/hooks/getUserPlaces'
+import { resolveIPFSUrl } from '@/utils/resolveIPFSUrl'
+
+type LatLngLiteral = google.maps.LatLngLiteral
+type Map = google.maps.Map
+
+const mapContainerStyle = {
+  height: '100vh',
+  width: '100vw',
+}
+const options = {
+  styles: mapStyles,
+  disableDefaultUI: true,
+  zoomControl: true,
+}
+
 interface IMarkSelection {
   lat: number
   lng: number
@@ -29,12 +34,47 @@ export default function Map() {
   const [selected, setSelected] = useState<IMarkSelection>()
   const [lat, setLat] = useState<number>()
   const [lng, setLng] = useState<number>()
+  const [minting, setIsMinting] = useState(false)
+  const { data: userMakers } = useUserPlaces()
+
+  const [mintedInfo, setMintedInfo] = useState<null | {
+    imageUrl: string
+    metadataUrl: string
+    tokenId: number
+  }>(null)
 
   const setPosition = (position: any) => {
-    var lat = position.coords.latitude
-    var lng = position.coords.longitude
-    setLat(lat)
-    setLng(lng)
+    setLat(position.coords.latitude)
+    setLng(position.coords.longitude)
+  }
+
+  const mapRef = useRef<Map>()
+
+  const onLoad = useCallback((map: Map) => {
+    mapRef.current = map
+  }, [])
+
+  const panTo = useCallback(({ lat, lng, placeId, description }: IMarkSelection) => {
+    mapRef.current?.panTo({ lat, lng })
+    setSelected({ lat, lng, placeId, description })
+  }, [])
+
+  const center = useMemo(() => ({ lat: -3.745, lng: -38.523 }), [lat, lng])
+
+  const onClickMint = async () => {
+    setIsMinting(true)
+    // 👇 Send a fetch request to Backend API.
+    try {
+      const response = await axios.post('/api/place/mint', {
+        userId: user?.email,
+        placeId: selected?.placeId,
+      })
+      setMintedInfo(response.data.data)
+      setSelected(undefined)
+      setIsMinting(false)
+    } catch (error) {
+      setIsMinting(false)
+    }
   }
 
   useEffect(() => {
@@ -47,71 +87,38 @@ export default function Map() {
     }
     getLocation()
   })
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const mapRef = useRef<GoogleMap>()
-
-  const onLoad = useCallback((map) => (mapRef.current = map), [])
-  const panTo = useCallback(({ lat, lng, placeId, description }: IMarkSelection) => {
-    mapRef.current?.panTo({ lat, lng })
-    mapRef.current?.setZoom(14)
-    console.log('panTo', placeId)
-    setSelected({ lat, lng, placeId, description })
-  }, [])
-  const center = useMemo(() => ({ lat: lat, lng: lng }), [lat, lng])
-  const mapContainerStyle = {
-    height: '100vh',
-    width: '100vw',
-  }
-  const options = {
-    styles: mapStyles,
-    disableDefaultUI: true,
-    zoomControl: true,
-  }
-
-  const onClickMint = async () => {
-    // 👇 Send a fetch request to Backend API.
-    const response = await fetch('/api/place/mint', {
-      method: 'POST',
-      body: JSON.stringify({
-        userId: user?.email,
-        placeId: selected?.placeId,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    const data = await response.json()
-    console.log('MINT RESULT', data)
-  }
   return (
     <div>
       <Header panTo={panTo} />
-      {/* <ConfirmMint onClose={onClose} onOpen={onOpen} isOpen={isOpen} onConfirm={onConfirmMint} /> */}
       <div className="map">
         <GoogleMap
-          zoom={10}
+          zoom={3}
           center={center}
-          mapTypeId={google.maps.MapTypeId.ROADMAP}
           mapContainerStyle={mapContainerStyle}
           options={options}
           onLoad={onLoad}
         >
-          {markers.map((marker) => (
-            <Marker
-              key={`${marker.lat}-${marker.lng}`}
-              position={{ lat: marker.lat, lng: marker.lng }}
-              onClick={() => {
-                setSelected(marker)
-              }}
-              icon={{
-                url: `/marker.svg`,
-                origin: new window.google.maps.Point(0, 0),
-                anchor: new window.google.maps.Point(15, 15),
-                scaledSize: new window.google.maps.Size(30, 30),
-              }}
-            />
-          ))}
+          {userMakers?.data
+            .filter((place) => place.location)
+            .map((place) => {
+              console.log(place.location?.latitude)
+              console.log(place.location?.longitude)
+
+              return (
+                <Marker
+                  key={`${place.id}`}
+                  position={{ lat: place.location!.latitude, lng: place.location!.longitude }}
+                  title={place.name}
+                  icon={{
+                    url: resolveIPFSUrl(place.imageUrl),
+                    origin: new window.google.maps.Point(0, 0),
+                    anchor: new window.google.maps.Point(15, 15),
+                    scaledSize: new window.google.maps.Size(50, 50),
+                  }}
+                />
+              )
+            })}
           {selected ? (
             <InfoWindow
               position={{ lat: selected.lat, lng: selected.lng }}
@@ -120,15 +127,18 @@ export default function Map() {
               }}
             >
               <Flex align="center">
-                <Text>Collect this place! <strong>{selected.description}</strong> </Text>
+                <Text>
+                  Collect this place! <strong>{selected.description}</strong>{' '}
+                </Text>
 
                 <Button colorScheme="red" onClick={onClickMint} ml={3}>
-                  Mint!
+                  {!minting ? 'Mint!' : 'Minting...'}
                 </Button>
               </Flex>
             </InfoWindow>
           ) : null}
         </GoogleMap>
+        {mintedInfo && <MintedModal {...mintedInfo} closeModal={() => setMintedInfo(null)} />}
       </div>
     </div>
   )

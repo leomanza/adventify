@@ -5,11 +5,7 @@ interface IPlace {
   type: string
   tokenId: number
   name: string
-  // location?: { latitude: number; longitude: number }
-  // compoundCode?: {
-  //   code: string
-  //   name: string
-  // }
+  location?: { latitude: number; longitude: number }
   imageUrl: string
   metadataUrl: string
 }
@@ -33,6 +29,13 @@ const PlaceSchema: Schema = new Schema<IPlace>({
     type: String,
     required: true,
   },
+  location: new Schema<{ latitude: Number; longitude: Number }>(
+    {
+      latitude: { type: Number, required: true },
+      longitude: { type: Number, required: true },
+    },
+    { _id: false }
+  ),
   imageUrl: {
     type: String,
     required: true,
