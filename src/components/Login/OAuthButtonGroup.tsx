@@ -1,9 +1,11 @@
 import { Button, ButtonGroup, VisuallyHidden } from '@chakra-ui/react'
-import { GitHubIcon, GoogleIcon, TwitterIcon } from './ProviderIcons'
+import { GoogleIcon, TwitterIcon } from './ProviderIcons'
+import { FaWallet } from 'react-icons/fa'
 
 const providers = [
   { name: 'Google', icon: <GoogleIcon boxSize="5" /> },
   { name: 'Twitter', icon: <TwitterIcon boxSize="5" /> },
+  { name: 'Wallet', icon: <FaWallet size="24" /> },
 ]
 
 export const OAuthButtonGroup = () => (
