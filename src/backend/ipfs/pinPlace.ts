@@ -1,24 +1,23 @@
-import { Place } from "@/types";
-import pinIPFS from "./pinIPFS";
+import pinIPFS from './pinIPFS'
 
-async function pinPlace(place: Record<string, unknown>, image: string) {
+async function pinPlace(name: string, attributes: Record<string, unknown>, image: string) {
   try {
     const data = JSON.stringify({
-      description: `Adventify place: ${place.name}`,
+      description: `Place minted through Adventify`,
       image,
-      name: place.name,
-      attributes: [{ ...place }],
-    });
+      name,
+      attributes: [{ ...attributes }],
+    })
 
-    const res = await pinIPFS(data);
+    const res = await pinIPFS(data)
 
-    if (!res) throw "PIN error";
+    if (!res) throw 'PIN error'
 
-    return `ipfs://${res.path}`;
+    return `ipfs://${res.path}`
   } catch (error) {
-    console.error(error);
-    return null;
+    console.error(error)
+    return null
   }
 }
 
-export default pinPlace;
+export default pinPlace

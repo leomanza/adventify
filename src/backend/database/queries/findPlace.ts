@@ -2,7 +2,7 @@
 
 import PlaceModel from '@/backend/database/models/place'
 
-export async function findLocation(placeId: string) {
+export async function findPlace(placeId: string) {
   try {
     const location = await PlaceModel.findOne({ id: placeId }).exec()
     return location || null

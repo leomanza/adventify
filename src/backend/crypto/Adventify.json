@@ -94,6 +94,17 @@
     "type": "function"
   },
   {
+    "inputs": [
+      { "internalType": "string", "name": "mapPlaceId", "type": "string" },
+      { "internalType": "string", "name": "metadataUri", "type": "string" },
+      { "internalType": "uint256", "name": "maxItems", "type": "uint256" }
+    ],
+    "name": "createSpecialToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }],
     "name": "exists",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
@@ -107,6 +118,13 @@
     ],
     "name": "isApprovedForAll",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "maxItemsPerToken",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -133,9 +151,7 @@
     "name": "places",
     "outputs": [
       { "internalType": "uint256", "name": "defaultTokenId", "type": "uint256" },
-      { "internalType": "bool", "name": "isVerified", "type": "bool" },
-      { "internalType": "uint256", "name": "maxItems", "type": "uint256" },
-      { "internalType": "uint256", "name": "itemsAmount", "type": "uint256" }
+      { "internalType": "bool", "name": "isVerified", "type": "bool" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -199,7 +215,7 @@
   },
   {
     "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "tokenIdBelongsToPlaceId",
+    "name": "tokenIdToPlaceMapId",
     "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
     "stateMutability": "view",
     "type": "function"
