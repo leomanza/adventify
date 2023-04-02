@@ -14,12 +14,19 @@ import mapStyles from './mapStyles'
 type LatLngLiteral = google.maps.LatLngLiteral
 type DirectionsResult = google.maps.DirectionsResult
 type MapOptions = google.maps.MapOptions
-import { useDisclosure } from '@chakra-ui/react'
+import { useDisclosure, Button, Flex, Text } from '@chakra-ui/react'
 import ConfirmMint from './ConfirmMint'
-
+import { UserStore } from '@/stores/user.store'
+interface IMarkSelection {
+  lat: number
+  lng: number
+  placeId: string
+  description: string
+}
 export default function Map() {
+  const user = UserStore((state) => state.user)
   const [markers, setMarkers] = useState([])
-  const [selected, setSelected] = useState(null)
+  const [selected, setSelected] = useState<IMarkSelection>()
   const [lat, setLat] = useState<number>()
   const [lng, setLng] = useState<number>()
 
@@ -42,30 +49,14 @@ export default function Map() {
   })
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const onConfirmMint = () => {
-    // call apu/mintPlace
-    onClose()
-  }
-
-  const onMapClick = useCallback((e: any) => {
-    console.log('place', e)
-    onOpen()
-
-    // setMarkers((current) => [
-    //   ...current,
-    //   {
-    //     lat: e.latLng.lat(),
-    //     lng: e.latLng.lng(),
-    //     time: new Date(),
-    //   },
-    // ])
-  }, [])
   const mapRef = useRef<GoogleMap>()
 
   const onLoad = useCallback((map) => (mapRef.current = map), [])
-  const panTo = useCallback(({ lat, lng }: { lat: number; lng: number }) => {
+  const panTo = useCallback(({ lat, lng, placeId, description }: IMarkSelection) => {
     mapRef.current?.panTo({ lat, lng })
     mapRef.current?.setZoom(14)
+    console.log('panTo', placeId)
+    setSelected({ lat, lng, placeId, description })
   }, [])
   const center = useMemo(() => ({ lat: lat, lng: lng }), [lat, lng])
   const mapContainerStyle = {
@@ -77,10 +68,26 @@ export default function Map() {
     disableDefaultUI: true,
     zoomControl: true,
   }
+
+  const onClickMint = async () => {
+    // 👇 Send a fetch request to Backend API.
+    const response = await fetch('/api/place/mint', {
+      method: 'POST',
+      body: JSON.stringify({
+        userId: user?.email,
+        placeId: selected?.placeId,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const data = await response.json()
+    console.log('MINT RESULT', data)
+  }
   return (
     <div>
       <Header panTo={panTo} />
-      <ConfirmMint onClose={onClose} onOpen={onOpen} isOpen={isOpen} onConfirm={onConfirmMint} />
+      {/* <ConfirmMint onClose={onClose} onOpen={onOpen} isOpen={isOpen} onConfirm={onConfirmMint} /> */}
       <div className="map">
         <GoogleMap
           zoom={10}
@@ -89,7 +96,6 @@ export default function Map() {
           mapContainerStyle={mapContainerStyle}
           options={options}
           onLoad={onLoad}
-          onClick={onMapClick}
         >
           {markers.map((marker) => (
             <Marker
@@ -110,17 +116,16 @@ export default function Map() {
             <InfoWindow
               position={{ lat: selected.lat, lng: selected.lng }}
               onCloseClick={() => {
-                setSelected(null)
+                setSelected(undefined)
               }}
             >
-              <div>
-                <h2>
-                  <span role="img" aria-label="bear">
-                    📍
-                  </span>{' '}
-                </h2>
-                <p>Place Spotted {formatRelative(selected.time, new Date())}</p>
-              </div>
+              <Flex align="center">
+                <Text>Adventify this place! <strong>{selected.description}</strong> </Text>
+
+                <Button colorScheme="red" onClick={onClickMint} ml={3}>
+                  Mint!
+                </Button>
+              </Flex>
             </InfoWindow>
           ) : null}
         </GoogleMap>
