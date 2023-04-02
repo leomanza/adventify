@@ -35,7 +35,7 @@ export default function Map() {
   const [lat, setLat] = useState<number>()
   const [lng, setLng] = useState<number>()
   const [minting, setIsMinting] = useState(false)
-  const { data: userMakers } = useUserPlaces()
+  const { data: userMakers, mutate } = useUserPlaces()
 
   const [mintedInfo, setMintedInfo] = useState<null | {
     imageUrl: string
@@ -72,6 +72,7 @@ export default function Map() {
       setMintedInfo(response.data.data)
       setSelected(undefined)
       setIsMinting(false)
+      mutate()
     } catch (error) {
       setIsMinting(false)
     }
@@ -102,9 +103,6 @@ export default function Map() {
           {userMakers?.data
             .filter((place) => place.location)
             .map((place) => {
-              console.log(place.location?.latitude)
-              console.log(place.location?.longitude)
-
               return (
                 <Marker
                   key={`${place.id}`}
