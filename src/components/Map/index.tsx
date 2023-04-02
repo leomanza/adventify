@@ -120,7 +120,7 @@ export default function Map() {
               }}
             >
               <Flex align="center">
-                <Text>Adventify this place! <strong>{selected.description}</strong> </Text>
+                <Text>Collect this place! <strong>{selected.description}</strong> </Text>
 
                 <Button colorScheme="red" onClick={onClickMint} ml={3}>
                   Mint!
