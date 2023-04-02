@@ -16,6 +16,7 @@ export async function findGooglePlace(placeId: string) {
           'formatted_address',
           'name',
           'place_id',
+          'geometry',
           'type',
         ],
         key: process.env.GOOGLE_MAPS_KEY_DB as string,

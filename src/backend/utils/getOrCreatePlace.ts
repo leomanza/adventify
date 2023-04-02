@@ -18,7 +18,7 @@ export async function getOrCreatePlace(placeId: string) {
 
   // Get google place details
   const placeDetails = await findGooglePlace(placeId)
-  if (!placeDetails || !placeDetails.place_id || !placeDetails?.types) {
+  if (!placeDetails || !placeDetails.place_id || !placeDetails?.types || !placeDetails.geometry) {
     return {
       error: true,
       message: `Place not supported ${placeId}`,
@@ -77,6 +77,10 @@ export async function getOrCreatePlace(placeId: string) {
     tokenId: placeSC.defaultTokenId.toNumber(),
     imageUrl: placeCategoryIPFSImageUrl,
     metadataUrl: placeMetadataIPFSUrl,
+    location: {
+      latitude: placeDetails.geometry.location.lat,
+      longitude: placeDetails.geometry.location.lng,
+    },
   })
 
   if (!placeDB) {
