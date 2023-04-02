@@ -57,6 +57,6 @@ const PlaceSchema: Schema = new Schema<IPlace>({
   },
 })
 
-const PlaceModel = (models.Location as Model<IPlace>) || model<IPlace>('Place', PlaceSchema)
+const PlaceModel = (models.Place as Model<IPlace>) || model<IPlace>('Place', PlaceSchema)
 
 export default PlaceModel

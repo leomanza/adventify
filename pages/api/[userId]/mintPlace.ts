@@ -1,23 +1,26 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { getUser } from '../../../src/backend/utils/getUser'
 
 type Data = {
-  name: string
+  name?: string
+  message?: string
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  const place = req.body.place // place from googleMaps
-  
+  const userId = req.query.userId
+  // place from googleMaps
+  const place = req.body.place 
 
-  const user = await supabase.getUserBy(userId) 
+  if(!userId || Array.isArray(userId)) {
+    return res.status(500)
+  }
+  
+  const user = await getUser(userId as string) 
 
   if (!user) {
-    return res.status(403)
+    return res.status(500).json({ message: 'User not found' })
   }
-
-  if(!user.getAddress()) {
-    const walletData = createWallet()
-    user.save(walletData)
-  } 
+ 
 
   const category = place.category // bus_station
 
