@@ -19,13 +19,7 @@ export const UserStore = create<State>()(
       isAuthenticated: false,
       setUser: (_user: User) => set({ user: _user, isAuthenticated: true }),
       removeAuthInfo: () =>
-        set((state) => {
-          return {
-            ...state,
-            user: undefined,
-            isAuthenticated: false,
-          };
-        }),
+      set({}, true)
     }),
     {
       name: "user",
