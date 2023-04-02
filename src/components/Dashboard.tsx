@@ -8,7 +8,7 @@ export default function Dashboard() {
   const libraries = useMemo(() => ['places'], [])
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY as string,
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY_MAP as string,
     libraries: libraries as any,
   });
 
